@@ -1,12 +1,12 @@
 from fastapi import FastAPI, APIRouter
 
-router_anime = APIRouter(
+router_comment = APIRouter(
     prefix="/anime",
     tags=["Anime"]
 )
 
-@router_anime.get("/{anime_id}")
+@router_comment.get("/{comment_id}")
 async def get():
     return "{" \
-           "anime_id: 1" \
+           "comment_id: 1" \
            "}"
