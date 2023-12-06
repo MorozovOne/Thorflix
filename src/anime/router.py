@@ -2,9 +2,9 @@ from fastapi import FastAPI, APIRouter
 
 router_anime = APIRouter(
     prefix="/anime",
-    tags=["Anime"]
+    tags=["anime"]
 )
 
 @router_anime.get("/{anime_id}")
 async def get():
-    return "hello"
+    return "{ anime_id: 1; }"
