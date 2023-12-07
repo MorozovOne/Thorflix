@@ -1,8 +1,8 @@
-"""Add models in auth/anime
+"""Add Pochti Finish
 
-Revision ID: 07fcfb310ddc
-Revises: 377b8a2dd26c
-Create Date: 2023-12-07 01:51:10.591338
+Revision ID: d4d683dea789
+Revises: 6de9861596e5
+Create Date: 2023-12-08 01:20:09.174566
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '07fcfb310ddc'
-down_revision: Union[str, None] = '377b8a2dd26c'
+revision: str = 'd4d683dea789'
+down_revision: Union[str, None] = '6de9861596e5'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

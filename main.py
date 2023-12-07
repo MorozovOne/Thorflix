@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 
-from anime.router import router_anime
-from auth.router import router_user
-from comment.router import router_comment
+from src.anime.router import router_anime
+from src.auth.router import router_user
+from src.comment.router import router_comment
+
+from src.anime.models import Anime
 
 app = FastAPI()
 
