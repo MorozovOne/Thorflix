@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+'''from fastapi import APIRouter
 from fastapi_users import FastAPIUsers
 
 from .auth import auth_backend
@@ -24,4 +24,4 @@ router_user.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
     prefix="/reg",
     tags=["auth"],
-)
+)'''

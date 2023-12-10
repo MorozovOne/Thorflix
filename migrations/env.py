@@ -10,12 +10,14 @@ import sys
 
 sys.path.append(os.path.join(sys.path[0], 'src'))
 
-from src.config import DB_HOST, DB_NAME, DB_USER, DB_PASS
-from src.models import MetaData as metadata
 
-'''from src.anime.models import metadata as metadata_anime
+from src.config import DB_HOST, DB_NAME, DB_USER, DB_PASS
+from src.models import metadata
+
+
+'''from src.animes.models import metadata as metadata_anime
 from src.auth.models import metadata as metadata_auth
-from src.comment.models import metadata as metadata_comment'''
+from src.comments.models import metadata as metadata_comment'''
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -37,7 +39,6 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.base.metadata
 target_metadata = metadata
-
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
