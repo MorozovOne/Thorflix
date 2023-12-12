@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, update, delete
 from sqlalchemy.orm import selectinload, Load, subqueryload, joinedload, load_only
 
 from animes.schemas import AnimeSchema
@@ -47,3 +47,18 @@ async def add_anime(new_anime: AnimeSchema, session: AsyncSession = Depends(get_
     await session.commit()
     return {"status": "HTTP_200_OK"}
 
+
+@router_anime.put('/update_anime', response_model=None)
+async def add_anime(new_anime: AnimeSchema, session: AsyncSession = Depends(get_async_session)):
+    stmt = update(Anime).values(**new_anime.dict())
+    await session.execute(stmt)
+    await session.commit()
+    return {"status": "HTTP_200_OK"}
+
+
+@router_anime.delete('/delete_anime/{anime_id}', response_model=None)
+async def add_anime(anime_id: int, session: AsyncSession = Depends(get_async_session)):
+    stmt = delete(Anime).where(Anime.id == anime_id)
+    await session.execute(stmt)
+    await session.commit()
+    return {"status": "HTTP_200_OK"}

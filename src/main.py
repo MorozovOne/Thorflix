@@ -8,7 +8,10 @@ from comments.router import router_comment
 
 
 
-app = FastAPI()
+app = FastAPI(
+    title='Thorflix',
+    description='API is'
+)
 
 
 app.include_router(router_user, prefix="/auth", tags=["auth"])
