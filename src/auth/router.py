@@ -1,9 +1,11 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import APIRouter
 from fastapi_users import FastAPIUsers
 
+from models import User
 from .auth import auth_backend
+
 from .schemas import UserRead, UserCreate
-from .database import User
+
 from .manager import get_user_manager
 
 
