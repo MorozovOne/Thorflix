@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy import select, insert
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, Load, subqueryload, joinedload, load_only
 
 from animes.schemas import AnimeSchema
 from database import get_async_session
-from models import Anime, Comment
+from models import Anime, Comment, Playlist, User
 
 router_anime = APIRouter(
     prefix="/animes",
@@ -13,16 +13,29 @@ router_anime = APIRouter(
 )
 
 
+@router_anime.get("/get_all_anime")
+async def get_anime(session: AsyncSession = Depends(get_async_session)):
+    result = await session.execute(
+        select(Anime)
+        .options(selectinload(Anime.playlist).subqueryload(Playlist.series))
+        .options(selectinload(Anime.comment).selectinload(Comment.user).load_only(User.username))
+    )
+    return result.scalars().all()
+
+
 
 @router_anime.get("/get_anime/{anime_id}")
 async def get_anime(anime_id: int, session: AsyncSession = Depends(get_async_session)):
-    query = select(Anime).options(selectinload(Anime.comment)).filter(Anime.id == anime_id)
-    result = await session.execute(query)
-    anime = result.scalars().first()
+    result = await session.execute(
+        select(Anime)
+        .filter(Anime.id == anime_id)
+        .options(selectinload(Anime.playlist).subqueryload(Playlist.series))
+        .options(selectinload(Anime.comment).selectinload(Comment.user).load_only(User.username))
+    )
 
-    if anime is None:
+    if result is None:
         raise HTTPException(status_code=404, detail="Anime not found")
-
+    anime = result.scalar()
     return anime
 
 

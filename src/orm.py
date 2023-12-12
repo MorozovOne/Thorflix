@@ -14,13 +14,4 @@ class AsyncORM:
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
 
-    @staticmethod
-    async def insert_anime():
-        async with get_async_session() as session:
-            Anime_name = Anime(name="Jack")
-            Poster = Anime(poster="image.png")
-            session.add_all([Anime_name, Poster])
-            await session.flush()
-            await session.commit()
-
     asyncio.run(create_tables())
