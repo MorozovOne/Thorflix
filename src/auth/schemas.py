@@ -32,3 +32,11 @@ class UserUpdate(schemas.BaseUserUpdate):
     is_active: Optional[bool] = None
     is_superuser: Optional[bool] = None
     is_verified: Optional[bool] = None
+
+
+class UserComment(schemas.BaseUser[int]):
+    id: int
+    username: str
+
+    class Config:
+        from_attributes = True

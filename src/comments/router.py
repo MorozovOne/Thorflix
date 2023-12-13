@@ -3,19 +3,35 @@ from sqlalchemy import insert, update, delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from comments.schemas import AddComment
+from comments.schemas import AddComment, ReadComment
 from database import get_async_session
 from models import Comment, User
+
+from fastapi_pagination import Page, add_pagination
+from fastapi_pagination.ext.sqlalchemy import paginate
+
 
 router_comment = APIRouter(
     prefix="/comments",
     tags=["comments"]
 )
 
+add_pagination(router_comment)
+
+@router_comment.get('/get_comment/{anime_id}', response_model=Page[ReadComment])
+async def get_comment(anime_id: int, session: AsyncSession = Depends(get_async_session)):
+    result = await paginate(
+        session, select(Comment)
+        .filter(Comment.anime_id == anime_id)
+        .options(selectinload(Comment.user).load_only(User.username))
+    )
+    print(User.model_dump())
 
 
 
-@router_comment.get('/get_comment/{comment_id}', response_model=None)
+
+
+'''@router_comment.get('/get_comment/{comment_id}', response_model=None)
 async def add_anime(comment_id: int, session: AsyncSession = Depends(get_async_session)):
     result = await session.execute(
         select(Comment)
@@ -23,7 +39,7 @@ async def add_anime(comment_id: int, session: AsyncSession = Depends(get_async_s
         .options(selectinload(Comment.user).load_only(User.username))
     )
     comment = result.scalar()
-    return comment
+    return comment'''
 
 
 @router_comment.post('/add_comment', response_model=None)
