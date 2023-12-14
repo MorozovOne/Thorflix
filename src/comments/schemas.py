@@ -16,11 +16,9 @@ class AddComment(BaseModel):
 
 
 class ReadComment(BaseModel):
-    id: int
-    anime_id: int
-    user_id: int
-    text: str
-    user: List[UserComment]
+    page: int = 1
+    per_page: int = 2
 
     class Config:
         from_attributes = True
+
