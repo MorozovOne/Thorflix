@@ -1,8 +1,8 @@
-"""Added account table
+"""Added another bad shit
 
-Revision ID: 18fd3ab4a87d
+Revision ID: 5d7cc896632e
 Revises: 
-Create Date: 2023-12-12 15:23:58.152099
+Create Date: 2023-12-17 14:50:25.740214
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '18fd3ab4a87d'
+revision: str = '5d7cc896632e'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,10 +24,16 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('poster', sa.String(), nullable=False),
-    sa.Column('type', sa.Enum('TV', name='typeanime'), nullable=True),
-    sa.Column('genre', sa.Enum('Comedia', name='genreanime'), nullable=True),
-    sa.Column('episodes', sa.Integer(), nullable=False),
+    sa.Column('logos', sa.String(), nullable=False),
+    sa.Column('cover', sa.String(), nullable=False),
+    sa.Column('type', sa.Enum('TV', 'Film', 'OVA', 'Special', name='typeanime'), nullable=True),
+    sa.Column('genre', sa.Enum('Genre1', 'Genre2', 'Genre3', 'Genre4', 'Genre5', 'Genre6', 'Genre7', 'Genre8', 'Genre9', 'Genre10', 'Genre11', 'Genre12', 'Genre13', 'Genre14', 'Genre15', 'Genre16', 'Genre17', 'Genre18', 'Genre19', 'Genre20', 'Genre21', 'Genre22', 'Genre23', 'Genre24', 'Genre25', 'Genre26', 'Genre27', 'Genre28', 'Genre29', 'Genre30', 'Genre31', name='genreanime'), nullable=True),
+    sa.Column('season', sa.String(), nullable=False),
     sa.Column('duration', sa.String(), nullable=False),
+    sa.Column('description', sa.String(length=255), nullable=False),
+    sa.Column('status', sa.Enum('Ongoing', 'Exit', 'Announcement', name='status'), nullable=True),
+    sa.Column('age', sa.Integer(), nullable=False),
+    sa.Column('year', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user',
@@ -66,6 +72,7 @@ def upgrade() -> None:
     sa.Column('fhd', sa.String(), nullable=False),
     sa.Column('hd', sa.String(), nullable=False),
     sa.Column('sd', sa.String(), nullable=False),
+    sa.Column('release', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['playlist_id'], ['playlist.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )

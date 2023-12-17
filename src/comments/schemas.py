@@ -1,11 +1,7 @@
 from pydantic import BaseModel
-from typing import Optional, List
-
-from auth.schemas import UserRead, UserComment
-from models import User
 
 
-class AddComment(BaseModel):
+class CreateComment(BaseModel):
     id: int
     anime_id: int
     user_id: int
@@ -22,3 +18,11 @@ class ReadComment(BaseModel):
     class Config:
         from_attributes = True
 
+
+class UpdateComment(BaseModel):
+    anime_id: int
+    user_id: int
+    text: str
+
+    class Config:
+        from_attributes = True
