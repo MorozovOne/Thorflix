@@ -1,6 +1,7 @@
 import secrets
+from typing import Optional
 
-from fastapi import APIRouter, UploadFile, Depends, Path, HTTPException
+from fastapi import APIRouter, UploadFile, Depends, Path, HTTPException, File
 from typing_extensions import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, update, delete
@@ -18,36 +19,17 @@ router_anime = APIRouter(
 )
 
 
-'''@router_anime.post("/uploadfile")
-async def create_upload_file(file: UploadFile = File(...), session: AsyncSession = Depends(get_async_session)):
-
-    FILEPATH = 'files/'
-    filename = file.filename
-
-    extension = filename.split(".")[1]
-
-    token_name = secrets.token_hex(10) +"."+extension
-    generated_name = FILEPATH + token_name
-    file_content = await file.read()
-
-    with open(generated_name, "wb") as file:
-        file.write(file_content)
-
-    file.close()
-
-    file_url = Path("localhost:8000/" + generated_name)
-    return { "HTTP_200_OK" }
-'''
-
 
 @router_anime.get("/get_all_anime")
 async def get_anime(pagination_params: ReadAnime = Depends(), session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(Anime)
 
+        # --- Пагинация
         offset = (pagination_params.page - 1) * pagination_params.per_page
         query = query.offset(offset).limit(pagination_params.per_page).order_by(Anime.id)
-        # --- Все что выше это фича пагинации
+        # --- Пагинация
+
         result = await session.execute(query)
         anime = result.scalars().all()
         return anime
@@ -74,40 +56,46 @@ async def get_anime(anime_id: Annotated[int, Path(gt=0, lt=2147483647)], session
 
 @router_anime.post('/add_poster')
 async def add_poster(
-        poster: UploadFile,
-        logo: UploadFile,
-        cover: UploadFile,
         anime_id: int,
+        poster: UploadFile,
+        logo: UploadFile = None,
+        cover: UploadFile = None,
         session: AsyncSession = Depends(get_async_session)
 ):
+
+    generated_name_logo = "None"
+    generated_name_cover = "None"
+
+    if not poster:
+        return HTTPException(status_code=404, detail="not found")
+
+    if logo:
+        logo_name = logo.filename
+        split_logo = logo_name.split(".")[1]
+        token_name_logo = secrets.token_hex(10) + "." + split_logo
+        generated_name_logo = 'files/logos/' + token_name_logo
+        content_logo = await logo.read()
+
+        with open(generated_name_logo, "wb") as file:
+            file.write(content_logo)
+
+    if cover:
+        cover_name = cover.filename
+        split_cover = cover_name.split(".")[1]
+        token_name_cover = secrets.token_hex(10) + "." + split_cover
+        generated_name_cover = 'files/covers/' + token_name_cover
+        content_cover = await cover.read()
+        with open(generated_name_cover, "wb") as file:
+            file.write(content_cover)
+
+
     poster_name = poster.filename
-    logo_name = logo.filename
-    cover_name = cover.filename
-
     split_poster = poster_name.split(".")[1]
-    split_logo = logo_name.split(".")[1]
-    split_cover = cover_name.split(".")[1]
-
     token_name_poster = secrets.token_hex(10) + "." + split_poster
-    token_name_logo = secrets.token_hex(10) + "." + split_logo
-    token_name_cover = secrets.token_hex(10) + "." + split_cover
-
     generated_name_poster = 'files/posters/' + token_name_poster
-    generated_name_logo = 'files/logos/' + token_name_logo
-    generated_name_cover = 'files/covers/' + token_name_cover
-
     content_poster = await poster.read()
-    content_logo = await logo.read()
-    content_cover = await cover.read()
-
     with open(generated_name_poster, "wb") as file:
         file.write(content_poster)
-    with open(generated_name_logo, "wb") as file:
-        file.write(content_logo)
-    with open(generated_name_cover, "wb") as file:
-        file.write(content_cover)
-    file.close()
-
 
     stmt = (
         update(Anime).
@@ -124,11 +112,12 @@ async def add_poster(
 
 
 
-@router_anime.post(
-    '/add_anime',
-    response_model=None
-)
-async def add_anime(new_anime: CreateAnime, session: AsyncSession = Depends(get_async_session)):
+@router_anime.post('/add_anime', response_model=None)
+async def add_anime(
+        new_anime: CreateAnime,
+        session: AsyncSession = Depends(get_async_session)
+):
+
     try:
         stmt = insert(Anime).values(**new_anime.dict())
         await session.execute(stmt)

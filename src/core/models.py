@@ -26,6 +26,8 @@ user = Table(
     Column("username", String, nullable=False),
     Column("email", String, nullable=False),
     Column("status", String, nullable=True),
+    Column("picture", String, nullable=True),
+    Column("profile_cover", String, nullable=True),
     Column("hashed_password", String, nullable=False),
     Column("is_active", Boolean, nullable=False, default=False),
     Column("is_superuser", Boolean, nullable=False, default=False),
@@ -41,6 +43,12 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     )
     status: Mapped[str] = mapped_column(
         String(length=200), nullable=True
+    )
+    picture: Mapped[str] = mapped_column(
+        nullable=True
+    )
+    profile_cover: Mapped[str] = mapped_column(
+        nullable=True
     )
     email: Mapped[str] = mapped_column(
         String(length=320), unique=True, index=True, nullable=False

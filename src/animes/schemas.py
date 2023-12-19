@@ -19,11 +19,6 @@ class CreateAnime(BaseModel):
     age: int
     year: int
 
-    @property
-    def poster_url(self) -> Optional[str]:
-        if self.poster_file:
-            return f"/files/{self.poster.filename}"
-        return None
 
     class Config:
         from_attributes = True

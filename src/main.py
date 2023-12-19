@@ -19,7 +19,7 @@ app = FastAPI(
 
 
 app.mount("/files", StaticFiles(directory="files"), name='images')
-app.include_router(router_user, prefix="/auth", tags=["auth"])
+app.include_router(router_user, prefix="/user", tags=["user"])
 app.include_router(router_anime)
 app.include_router(router_comment)
 
