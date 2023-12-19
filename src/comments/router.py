@@ -5,7 +5,8 @@ from sqlalchemy.orm import selectinload
 
 from comments.schemas import CreateComment, ReadComment, UpdateComment
 from core.database import get_async_session
-from core.models import Comment, User
+from comments.models import Comment
+from auth.models import User
 
 
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi_users import FastAPIUsers
 
-from core.models import User
+from auth.models import User
 from .auth import auth_backend
 
 from .schemas import UserRead, UserCreate
@@ -16,7 +16,7 @@ from sqlalchemy.orm import selectinload
 
 from animes.schemas import CreateAnime, ReadAnime, UpdateAnime
 from core.database import get_async_session
-from core.models import Anime, Playlist
+from animes.models import Anime, Playlist
 
 
 

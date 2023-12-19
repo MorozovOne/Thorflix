@@ -10,7 +10,7 @@ from sqlalchemy.orm import selectinload
 from animes.schemas import CreateAnime, ReadAnime, UpdateAnime
 from animes.utils import upload_logo, upload_cover, upload_poster
 from core.database import get_async_session
-from core.models import Anime, Playlist, Series
+from animes.models import Anime, Playlist, Series
 
 router_anime = APIRouter(
     prefix="/animes",

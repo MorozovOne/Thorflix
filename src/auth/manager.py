@@ -7,7 +7,7 @@ from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin
 
 from auth.letter import send_letter_to_email
-from core.models import User, user
+from auth.models import User, user
 from auth.utils import get_user_db
 
 from config import SECRET_KEY, SMTP_USER, SMTP_HOST, SMTP_PORT, SMTP_PASS
