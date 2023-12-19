@@ -10,6 +10,11 @@ DB_NAME = os.environ.get('DB_NAME')
 DB_USER = os.environ.get('DB_USER')
 DB_PASS = os.environ.get('DB_PASS')
 
+SMTP_USER = "abdullvagab123@gmail.com"
+SMTP_PASS = "avkr lvey yeom uuuc"
+SMTP_HOST = "smtp.gmail.com"
+SMTP_PORT = 465
+
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 class Settings(BaseSettings):
