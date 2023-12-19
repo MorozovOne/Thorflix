@@ -8,15 +8,21 @@ from sqlalchemy import select, insert, update, delete
 from sqlalchemy.orm import selectinload
 
 from animes.schemas import CreateAnime, ReadAnime, UpdateAnime
+from animes.utils import upload_logo, upload_cover, upload_poster
 from core.database import get_async_session
-from core.models import Anime, Playlist
-
-
+from core.models import Anime, Playlist, Series
 
 router_anime = APIRouter(
     prefix="/animes",
     tags=["animes"]
 )
+
+
+@router_anime.get("/get_series/{series_id}")
+async def get_series(series_id: int, session: AsyncSession = Depends(get_async_session)):
+    result = await session.execute(select(Series).where(Series.id == series_id))
+    anime = result.scalars().all()
+    return anime
 
 
 
@@ -62,40 +68,23 @@ async def add_poster(
         cover: UploadFile = None,
         session: AsyncSession = Depends(get_async_session)
 ):
-
     generated_name_logo = "None"
     generated_name_cover = "None"
 
-    if not poster:
-        return HTTPException(status_code=404, detail="not found")
+    try:
+        if not poster:
+            return {"detail": "you not upload poster"}
+        else:
+            generated_name_poster = await upload_poster(poster)
 
-    if logo:
-        logo_name = logo.filename
-        split_logo = logo_name.split(".")[1]
-        token_name_logo = secrets.token_hex(10) + "." + split_logo
-        generated_name_logo = 'files/logos/' + token_name_logo
-        content_logo = await logo.read()
+        if logo:
+            generated_name_logo = await upload_logo(logo)
 
-        with open(generated_name_logo, "wb") as file:
-            file.write(content_logo)
+        if cover:
+            generated_name_cover = await upload_cover(cover)
 
-    if cover:
-        cover_name = cover.filename
-        split_cover = cover_name.split(".")[1]
-        token_name_cover = secrets.token_hex(10) + "." + split_cover
-        generated_name_cover = 'files/covers/' + token_name_cover
-        content_cover = await cover.read()
-        with open(generated_name_cover, "wb") as file:
-            file.write(content_cover)
-
-
-    poster_name = poster.filename
-    split_poster = poster_name.split(".")[1]
-    token_name_poster = secrets.token_hex(10) + "." + split_poster
-    generated_name_poster = 'files/posters/' + token_name_poster
-    content_poster = await poster.read()
-    with open(generated_name_poster, "wb") as file:
-        file.write(content_poster)
+    except:
+        raise HTTPException(status_code=405, detail="sorry its not upload")
 
     stmt = (
         update(Anime).

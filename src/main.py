@@ -2,12 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import add_pagination
 from fastapi.staticfiles import StaticFiles
-from starlette.responses import HTMLResponse
 
 from animes.router import router_anime
 from auth.router import router_user
 
-'''from auth.router import router_user'''
 from comments.router import router_comment
 
 
