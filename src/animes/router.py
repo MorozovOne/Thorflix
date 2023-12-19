@@ -68,9 +68,6 @@ async def add_poster(
         cover: UploadFile = None,
         session: AsyncSession = Depends(get_async_session)
 ):
-    generated_name_logo = "None"
-    generated_name_cover = "None"
-
     try:
         if not poster:
             return {"detail": "you not upload poster"}
@@ -79,9 +76,13 @@ async def add_poster(
 
         if logo:
             generated_name_logo = await upload_logo(logo)
+        else:
+            generated_name_logo = "None"
 
         if cover:
             generated_name_cover = await upload_cover(cover)
+        else:
+            generated_name_cover = "None"
 
     except:
         raise HTTPException(status_code=405, detail="sorry its not upload")

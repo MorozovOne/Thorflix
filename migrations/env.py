@@ -8,11 +8,15 @@ from alembic import context
 import os
 import sys
 
-sys.path.append(os.path.join(sys.path[0], 'src'))
+from src.core.database import Base
+from src.animes.models import metadata as metadata_anime
+from src.auth.models import metadata as metadata_anime
+from src.comments.models import metadata as metadata_anime
+
 
 
 from src.config import DB_HOST, DB_NAME, DB_USER, DB_PASS
-from core.models import Base
+
 
 '''from src.animes.models import metadata as metadata_anime
 from src.auth.models import metadata as metadata_auth
