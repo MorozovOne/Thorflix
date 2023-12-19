@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
-from core.models import GenreAnime, TypeAnime, Status
+from animes.models import GenreAnime, TypeAnime, Status
 
 
 class CreateAnime(BaseModel):
