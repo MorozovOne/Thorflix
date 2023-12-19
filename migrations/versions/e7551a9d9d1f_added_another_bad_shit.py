@@ -1,8 +1,8 @@
 """Added another bad shit
 
-Revision ID: 5d7cc896632e
+Revision ID: e7551a9d9d1f
 Revises: 
-Create Date: 2023-12-17 14:50:25.740214
+Create Date: 2023-12-19 11:23:05.652697
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '5d7cc896632e'
+revision: str = 'e7551a9d9d1f'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,7 +24,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('poster', sa.String(), nullable=False),
-    sa.Column('logos', sa.String(), nullable=False),
+    sa.Column('logo', sa.String(), nullable=False),
     sa.Column('cover', sa.String(), nullable=False),
     sa.Column('type', sa.Enum('TV', 'Film', 'OVA', 'Special', name='typeanime'), nullable=True),
     sa.Column('genre', sa.Enum('Genre1', 'Genre2', 'Genre3', 'Genre4', 'Genre5', 'Genre6', 'Genre7', 'Genre8', 'Genre9', 'Genre10', 'Genre11', 'Genre12', 'Genre13', 'Genre14', 'Genre15', 'Genre16', 'Genre17', 'Genre18', 'Genre19', 'Genre20', 'Genre21', 'Genre22', 'Genre23', 'Genre24', 'Genre25', 'Genre26', 'Genre27', 'Genre28', 'Genre29', 'Genre30', 'Genre31', name='genreanime'), nullable=True),
@@ -40,6 +40,8 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=200), nullable=False),
     sa.Column('status', sa.String(length=200), nullable=True),
+    sa.Column('picture', sa.String(), nullable=True),
+    sa.Column('profile_cover', sa.String(), nullable=True),
     sa.Column('email', sa.String(length=320), nullable=False),
     sa.Column('hashed_password', sa.String(length=1024), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
