@@ -4,11 +4,11 @@ from email.message import EmailMessage
 from config import SMTP_USER, SMTP_HOST, SMTP_PORT, SMTP_PASS
 
 
-def send_letter_to_email(token: str, username: str):
+def send_letter_to_email(token: str, username: str, email_str: str):
     email = EmailMessage()
     email['Subject'] = 'Ваш код для подтверждения'
     email['From'] = SMTP_USER
-    email['To'] = "supermanformedia@gmail.com"
+    email['To'] = email_str
 
     email.set_content(
         '<div>'
