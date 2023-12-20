@@ -28,16 +28,21 @@ class UserManager(IntegerIDMixin, BaseUserManager[user, int]):
         self, user: user, token: str, request: Optional[Request] = None
     ):
         print(f"User {user.id} has forgot their password. Reset token: {token}")
-        send_letter_to_email(token)
+
+        username = user.username
+        email_str = user.email
+        send_letter_to_email(token, username, email_str)
 
 #нужно подробнее изучить тему про токены, то что я делаю это неправильно
 
     async def on_after_request_verify(
         self, user: User, token: str, request: Optional[Request] = None
     ):
-        username = user.username
         print(f"Verification requested for user {user.id}. Verification token: {token}")
-        send_letter_to_email(token, username)
+
+        username = user.username
+        email_str = user.email
+        send_letter_to_email(token, username, email_str)
 
 
 
