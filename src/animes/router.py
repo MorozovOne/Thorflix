@@ -12,7 +12,7 @@ from sqlalchemy.orm import selectinload
 
 from animes.schemas import CreateAnime, ReadAnime, UpdateAnime
 from animes.utils import upload_logo, upload_cover, upload_poster
-from config import REDIS_HOST
+from core.database import REDIS_HOST
 from core.database import get_async_session
 from animes.models import Anime, Playlist, Series
 

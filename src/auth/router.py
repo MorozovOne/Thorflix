@@ -6,7 +6,7 @@ from redis import asyncio as aioredis
 from fastapi_users import FastAPIUsers
 
 from auth.models import User
-from config import REDIS_HOST
+from core.database import REDIS_HOST
 from .auth import auth_backend
 
 from .schemas import UserRead, UserCreate

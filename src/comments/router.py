@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from comments.schemas import CreateComment, ReadComment, UpdateComment
-from config import REDIS_HOST
+from core.database import REDIS_HOST
 from core.database import get_async_session
 from comments.models import Comment
 from auth.models import User

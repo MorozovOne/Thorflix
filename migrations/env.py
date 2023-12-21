@@ -8,19 +8,15 @@ from alembic import context
 import os
 import sys
 
-from src.core.database import Base
-from src.animes.models import metadata as metadata_anime
-from src.auth.models import metadata as metadata_anime
-from src.comments.models import metadata as metadata_anime
+sys.path.append(os.path.join(sys.path[0], 'src'))
 
-
+from src.core.database import Base, metadata
 
 from src.config import DB_HOST, DB_NAME, DB_USER, DB_PASS
 
-
-'''from src.animes.models import metadata as metadata_anime
-from src.auth.models import metadata as metadata_auth
-from src.comments.models import metadata as metadata_comment'''
+from src.auth.models import *
+from src.animes.models import *
+from src.comments.models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini files in use.
