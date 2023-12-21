@@ -3,4 +3,3 @@ venv/
 .env-non-dev
 .idea
 .idea/
-.app.sh
