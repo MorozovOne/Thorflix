@@ -1,7 +1,6 @@
 import smtplib
 from email.message import EmailMessage
 
-from config import SMTP_USER, SMTP_HOST, SMTP_PORT, SMTP_PASS
 
 
 def send_letter_to_email(token: str, username: str, email_str: str):

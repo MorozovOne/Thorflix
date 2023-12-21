@@ -1,22 +1,23 @@
-from fastapi import APIRouter
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.decorator import cache
+
+from redis import asyncio as aioredis
 from fastapi_users import FastAPIUsers
 
 from auth.models import User
+from config import REDIS_HOST
 from .auth import auth_backend
 
 from .schemas import UserRead, UserCreate
-
 from .manager import get_user_manager
 
-from fastapi import APIRouter, UploadFile, Depends, Path, HTTPException, File
-from typing_extensions import Annotated
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, insert, update, delete
-from sqlalchemy.orm import selectinload
+from fastapi import APIRouter, Depends
 
-from animes.schemas import CreateAnime, ReadAnime, UpdateAnime
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
 from core.database import get_async_session
-from animes.models import Anime, Playlist
 
 
 
@@ -53,7 +54,9 @@ router_user.include_router(
     tags=["user"],
 )
 
+
 @router_user.get('/{user_id}',)
+@cache(expire=300)
 async def get_user(
     user_id: int,
     session: AsyncSession = Depends(get_async_session)
@@ -61,3 +64,8 @@ async def get_user(
     query = await session.execute(select(User).filter(User.id == user_id))
     user = query.scalar()
     return user
+
+@router_user.on_event("startup")
+async def startup():
+    redis = aioredis.from_url(f"redis://{REDIS_HOST}")
+    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")

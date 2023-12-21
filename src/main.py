@@ -1,3 +1,8 @@
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.decorator import cache
+
+from redis import asyncio as aioredis
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import add_pagination
@@ -7,8 +12,7 @@ from animes.router import router_anime
 from auth.router import router_user
 
 from comments.router import router_comment
-
-
+from config import REDIS_HOST
 
 app = FastAPI(
     title='Thorflix',

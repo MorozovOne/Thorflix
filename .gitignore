@@ -2,3 +2,5 @@ venv/
 .env
 .idea
 .idea/
+.env-non-dev
+.app.sh

@@ -1,7 +1,10 @@
-import secrets
-from typing import Optional
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.decorator import cache
 
-from fastapi import APIRouter, UploadFile, Depends, Path, HTTPException, File
+from redis import asyncio as aioredis
+
+from fastapi import APIRouter, UploadFile, Depends, Path, HTTPException
 from typing_extensions import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, update, delete
@@ -9,6 +12,7 @@ from sqlalchemy.orm import selectinload
 
 from animes.schemas import CreateAnime, ReadAnime, UpdateAnime
 from animes.utils import upload_logo, upload_cover, upload_poster
+from config import REDIS_HOST
 from core.database import get_async_session
 from animes.models import Anime, Playlist, Series
 
@@ -19,6 +23,7 @@ router_anime = APIRouter(
 
 
 @router_anime.get("/get_series/{series_id}")
+@cache(expire=300)
 async def get_series(series_id: int, session: AsyncSession = Depends(get_async_session)):
     result = await session.execute(select(Series).where(Series.id == series_id))
     anime = result.scalars().all()
@@ -27,6 +32,7 @@ async def get_series(series_id: int, session: AsyncSession = Depends(get_async_s
 
 
 @router_anime.get("/get_all_anime")
+@cache(expire=300)
 async def get_anime(pagination_params: ReadAnime = Depends(), session: AsyncSession = Depends(get_async_session)):
     try:
         query = select(Anime)
@@ -49,6 +55,7 @@ async def get_anime(pagination_params: ReadAnime = Depends(), session: AsyncSess
 
 
 @router_anime.get("/get_anime/{anime_id}")
+@cache(expire=300)
 async def get_anime(anime_id: Annotated[int, Path(gt=0, lt=2147483647)], session: AsyncSession = Depends(get_async_session)):
     result = await session.execute(
         select(Anime)
@@ -132,10 +139,14 @@ async def update_anime(id: int, update_anime: UpdateAnime, session: AsyncSession
 
 
 
-
 @router_anime.delete('/delete_anime/{anime_id}', response_model=None)
 async def add_anime(anime_id: int, session: AsyncSession = Depends(get_async_session)):
     stmt = delete(Anime).where(Anime.id == anime_id)
     await session.execute(stmt)
     await session.commit()
     return {"status": "HTTP_200_OK"}
+
+@router_anime.on_event("startup")
+async def startup():
+    redis = aioredis.from_url(f"redis://{REDIS_HOST}")
+    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
