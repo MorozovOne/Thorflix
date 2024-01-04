@@ -1,16 +1,22 @@
-import secrets
-from typing import Optional
+from fastapi import APIRouter, UploadFile, Depends, Path, HTTPException
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.decorator import cache
 
-from fastapi import APIRouter, UploadFile, Depends, Path, HTTPException, File
+from pydantic import ValidationError
+from redis import asyncio as aioredis
 from typing_extensions import Annotated
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, update, delete
 from sqlalchemy.orm import selectinload
 
+from animes.models import Anime, Playlist, Series
 from animes.schemas import CreateAnime, ReadAnime, UpdateAnime
 from animes.utils import upload_logo, upload_cover, upload_poster
+from core.config import get_settings
 from core.database import get_async_session
-from animes.models import Anime, Playlist, Series
+
 
 router_anime = APIRouter(
     prefix="/animes",
@@ -19,37 +25,44 @@ router_anime = APIRouter(
 
 
 @router_anime.get("/get_series/{series_id}")
-async def get_series(series_id: int, session: AsyncSession = Depends(get_async_session)):
+async def get_series(
+        series_id: Annotated[int, Path(gt=0, lt=2147483647)],
+        session: AsyncSession = Depends(get_async_session)
+):
     result = await session.execute(select(Series).where(Series.id == series_id))
+    anime = result.scalars().all()
+    if not anime:
+        raise HTTPException(status_code=404, detail="Not found")
+    else:
+        return {"anime": anime}
+
+
+
+@router_anime.get("/get_all_anime")
+@cache(expire=180)
+async def get_anime(
+        pagination_params: ReadAnime = Depends(),
+        session: AsyncSession = Depends(get_async_session)
+):
+    query = select(Anime)
+    # --- Пагинация
+    offset = (pagination_params.page - 1) * pagination_params.per_page
+    query = query.offset(offset).limit(pagination_params.per_page).order_by(Anime.id)
+    # --- Пагинация
+    result = await session.execute(query)
     anime = result.scalars().all()
     return anime
 
 
 
-@router_anime.get("/get_all_anime")
-async def get_anime(pagination_params: ReadAnime = Depends(), session: AsyncSession = Depends(get_async_session)):
-    try:
-        query = select(Anime)
-
-        # --- Пагинация
-        offset = (pagination_params.page - 1) * pagination_params.per_page
-        query = query.offset(offset).limit(pagination_params.per_page).order_by(Anime.id)
-        # --- Пагинация
-
-        result = await session.execute(query)
-        anime = result.scalars().all()
-        return anime
-
-    except ValueError:
-        raise HTTPException(status_code=422, detail="Value error")
-    except BaseException:
-        raise HTTPException(status_code=404, detail="Not found")
-
-
 
 
 @router_anime.get("/get_anime/{anime_id}")
-async def get_anime(anime_id: Annotated[int, Path(gt=0, lt=2147483647)], session: AsyncSession = Depends(get_async_session)):
+@cache(expire=180)
+async def get_anime(
+        anime_id: Annotated[int, Path(gt=0, lt=2147483647)],
+        session: AsyncSession = Depends(get_async_session)
+):
     result = await session.execute(
         select(Anime)
         .filter(Anime.id == anime_id)
@@ -63,16 +76,16 @@ async def get_anime(anime_id: Annotated[int, Path(gt=0, lt=2147483647)], session
 @router_anime.post('/add_poster')
 async def add_poster(
         anime_id: int,
-        poster: UploadFile,
+        poster: UploadFile = None,
         logo: UploadFile = None,
         cover: UploadFile = None,
         session: AsyncSession = Depends(get_async_session)
 ):
     try:
-        if not poster:
-            return {"detail": "you not upload poster"}
-        else:
+        if poster:
             generated_name_poster = await upload_poster(poster)
+        else:
+            generated_name_poster = "None"
 
         if logo:
             generated_name_logo = await upload_logo(logo)
@@ -120,11 +133,11 @@ async def add_anime(
 
 
 
-@router_anime.put(
-    '/update_anime',
-    response_model=None
-)
-async def update_anime(id: int, update_anime: UpdateAnime, session: AsyncSession = Depends(get_async_session)):
+@router_anime.put('/update_anime', response_model=None)
+async def update_anime(
+        id: int, update_anime: UpdateAnime,
+        session: AsyncSession = Depends(get_async_session)
+):
     stmt = update(Anime).where(Anime.id == id).values(**update_anime.dict())
     await session.execute(stmt)
     await session.commit()
@@ -132,10 +145,19 @@ async def update_anime(id: int, update_anime: UpdateAnime, session: AsyncSession
 
 
 
-
 @router_anime.delete('/delete_anime/{anime_id}', response_model=None)
-async def add_anime(anime_id: int, session: AsyncSession = Depends(get_async_session)):
+async def add_anime(
+        anime_id: int,
+        session: AsyncSession = Depends(get_async_session)
+):
     stmt = delete(Anime).where(Anime.id == anime_id)
     await session.execute(stmt)
     await session.commit()
     return {"status": "HTTP_200_OK"}
+
+
+
+@router_anime.on_event("startup")
+async def startup():
+    redis = aioredis.from_url(f"redis://{get_settings().get('redis_host')}")
+    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")

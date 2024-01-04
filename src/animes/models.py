@@ -1,17 +1,14 @@
 import enum
 
-from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy import (
-    Column,
     ForeignKey,
     Integer,
     MetaData,
     String,
-    Table,
-    Boolean,
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship, MappedColumn, declarative_base
+from sqlalchemy.orm import Mapped, mapped_column, relationship, MappedColumn
 
+from animes.genre import GenreAnime
 from core.database import Base
 
 metadata = MetaData()
@@ -27,39 +24,6 @@ class TypeAnime(enum.Enum):
     Film = "Фильм"
     OVA = "OVA"
     Special = "Спешл"
-
-class GenreAnime(enum.Enum):
-    Genre1 = "Комедия"
-    Genre2 = "Безумие"
-    Genre3 = "Боевые искусства"
-    Genre4 = "Вампиры"
-    Genre5 = "Военное"
-    Genre6 = "Гарем"
-    Genre7 = "Демоны"
-    Genre8 = "Дзёсэй"
-    Genre9 = "Драма"
-    Genre10 = "Исторический"
-    Genre11 = "Космос"
-    Genre12 = "Магия"
-    Genre13 = "Машины"
-    Genre14 = "Меха"
-    Genre15 = "Музыка"
-    Genre16 = "Повседневность"
-    Genre17 = "Приключения"
-    Genre18 = "Романтика"
-    Genre19 = "Самураи"
-    Genre20 = "Сверхъестественное"
-    Genre21 = "Сёдзё"
-    Genre22 = "Сёнэн"
-    Genre23 = "Сёнэн - Aй"
-    Genre24 = "Сэйнэн"
-    Genre25 = "Триллер"
-    Genre26 = "Ужасы"
-    Genre27 = "Фантастика"
-    Genre28 = "Фэнтези"
-    Genre29 = "Школа"
-    Genre30 = "Экшен"
-    Genre31 = 'Этти'
 
 
 class Anime(Base):

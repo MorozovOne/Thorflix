@@ -1,22 +1,17 @@
-from fastapi import APIRouter
 from fastapi_users import FastAPIUsers
 
 from auth.models import User
 from .auth import auth_backend
 
 from .schemas import UserRead, UserCreate
-
 from .manager import get_user_manager
 
-from fastapi import APIRouter, UploadFile, Depends, Path, HTTPException, File
-from typing_extensions import Annotated
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, insert, update, delete
-from sqlalchemy.orm import selectinload
+from fastapi import APIRouter, Depends
 
-from animes.schemas import CreateAnime, ReadAnime, UpdateAnime
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
 from core.database import get_async_session
-from animes.models import Anime, Playlist
 
 
 
@@ -52,6 +47,7 @@ router_user.include_router(
     prefix="/reg",
     tags=["user"],
 )
+
 
 @router_user.get('/{user_id}',)
 async def get_user(

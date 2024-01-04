@@ -1,0 +1,29 @@
+version: "3.11"
+services:
+  db:
+    image: postgres:15
+    container_name: db_app
+    env_file:
+      - .env-non-dev
+    ports:
+      - "5432:5432"
+
+
+  redis:
+    image: redis:latest
+    container_name: redis_app
+    command: --port 5370
+    expose:
+      - 5370
+
+  app:
+    build:
+      context: .
+    env_file:
+      - .env-non-dev
+    container_name: thorflix
+    ports:
+      - 9999:8000
+    depends_on:
+      - db
+      - redis

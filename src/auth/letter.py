@@ -1,13 +1,18 @@
 import smtplib
 from email.message import EmailMessage
 
-from config import SMTP_USER, SMTP_HOST, SMTP_PORT, SMTP_PASS
+from core.config import get_settings
+
+smtp_user = get_settings().get('smtp_user')
+smtp_pass = get_settings().get('smtp_pass')
+smtp_host = get_settings().get('smtp_host')
+smtp_port = get_settings().get('smtp_port')
 
 
 def send_letter_to_email(token: str, username: str, email_str: str):
     email = EmailMessage()
     email['Subject'] = 'Ваш код для подтверждения'
-    email['From'] = SMTP_USER
+    email['From'] = smtp_user
     email['To'] = email_str
 
     email.set_content(
@@ -19,6 +24,6 @@ def send_letter_to_email(token: str, username: str, email_str: str):
         '</div>',
         subtype='html'
     )
-    with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT) as server:
-        server.login(SMTP_USER, SMTP_PASS)
+    with smtplib.SMTP_SSL(smtp_host, smtp_port) as server:
+        server.login(smtp_user, smtp_pass)
         server.send_message(email)

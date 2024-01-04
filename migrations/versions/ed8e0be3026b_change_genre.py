@@ -1,8 +1,8 @@
-"""Added another bad shit
+"""Change genre
 
-Revision ID: e7551a9d9d1f
+Revision ID: ed8e0be3026b
 Revises: 
-Create Date: 2023-12-19 11:23:05.652697
+Create Date: 2023-12-30 23:54:52.650803
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'e7551a9d9d1f'
+revision: str = 'ed8e0be3026b'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

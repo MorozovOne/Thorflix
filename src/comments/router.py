@@ -1,9 +1,15 @@
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+
+from redis import asyncio as aioredis
 from fastapi import APIRouter, Depends
+
 from sqlalchemy import insert, update, delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from comments.schemas import CreateComment, ReadComment, UpdateComment
+from core.config import get_settings
 from core.database import get_async_session
 from comments.models import Comment
 from auth.models import User
@@ -60,3 +66,8 @@ async def delete_comment(comment_id: int, session: AsyncSession = Depends(get_as
     await session.execute(stmt)
     await session.commit()
     return {"status": "HTTP_200_OK"}
+
+@router_comment.on_event("startup")
+async def startup():
+    redis = aioredis.from_url(f"redis://{get_settings().get('redis_host')}")
+    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")

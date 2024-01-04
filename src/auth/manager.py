@@ -1,5 +1,3 @@
-import smtplib
-from email.message import EmailMessage
 from typing import Optional
 
 
@@ -10,9 +8,9 @@ from auth.letter import send_letter_to_email
 from auth.models import User, user
 from auth.utils import get_user_db
 
-from config import SECRET_KEY, SMTP_USER, SMTP_HOST, SMTP_PORT, SMTP_PASS
+from core.config import get_settings
 
-SECRET = SECRET_KEY
+SECRET = get_settings().get('secret_key')
 
 
 
@@ -33,7 +31,6 @@ class UserManager(IntegerIDMixin, BaseUserManager[user, int]):
         email_str = user.email
         send_letter_to_email(token, username, email_str)
 
-#нужно подробнее изучить тему про токены, то что я делаю это неправильно
 
     async def on_after_request_verify(
         self, user: User, token: str, request: Optional[Request] = None

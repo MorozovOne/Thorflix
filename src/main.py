@@ -1,14 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_pagination import add_pagination
 from fastapi.staticfiles import StaticFiles
 
 from animes.router import router_anime
 from auth.router import router_user
 
 from comments.router import router_comment
-
-
 
 app = FastAPI(
     title='Thorflix',
@@ -34,5 +31,3 @@ app.add_middleware(
     allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
                    "Authorization"],
 )
-
-add_pagination(app)

@@ -1,16 +1,8 @@
-import enum
-
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy import (
-    Column,
-    ForeignKey,
-    Integer,
-    MetaData,
-    String,
-    Table,
-    Boolean,
+    MetaData, Table, Column, Integer, String, Boolean
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship, MappedColumn, declarative_base
+from sqlalchemy.orm import Mapped, relationship, mapped_column
 
 from core.database import Base
 
