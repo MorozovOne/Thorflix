@@ -10,23 +10,22 @@ import sys
 
 sys.path.append(os.path.join(sys.path[0], 'src'))
 
-from src.core.database import Base, metadata
+from core.config import get_settings
+from core.database import Base
 
-from src.config import DB_HOST, DB_NAME, DB_USER, DB_PASS
-
-from src.auth.models import *
-from src.animes.models import *
-from src.comments.models import *
+from src.auth.models import metadata as metadata_auth
+from src.animes.models import metadata as metadata_anime
+from src.comments.models import metadata as metadata_comment
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini files in use.
 config = context.config
 
 section = config.config_ini_section
-config.set_section_option(section, "DB_HOST", DB_HOST)
-config.set_section_option(section, "DB_NAME", DB_NAME)
-config.set_section_option(section, "DB_USER", DB_USER)
-config.set_section_option(section, "DB_PASS", DB_PASS)
+config.set_section_option(section, "DB_HOST", get_settings().get('db_host'))
+config.set_section_option(section, "DB_NAME", get_settings().get('db_name'))
+config.set_section_option(section, "DB_USER", get_settings().get('db_user'))
+config.set_section_option(section, "DB_PASS", get_settings().get('db_pass'))
 
 # Interpret the config files for Python logging.
 # This line sets up loggers basically.

@@ -1,5 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator, ValidationInfo, validator
 from typing import Optional
+
+from typing_extensions import Annotated
 
 from animes.models import GenreAnime, TypeAnime, Status
 
@@ -25,12 +27,9 @@ class CreateAnime(BaseModel):
 
 
 class ReadAnime(BaseModel):
-    page: int = 1
-    per_page: int = 2
+    page: int = Field(gt=0, lt=10)
+    per_page: int
 
-
-    class Config:
-        from_attributes = True
 
 
 class UpdateAnime(BaseModel):

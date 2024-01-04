@@ -1,12 +1,6 @@
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
-from fastapi_cache.decorator import cache
-
-from redis import asyncio as aioredis
 from fastapi_users import FastAPIUsers
 
 from auth.models import User
-from core.database import REDIS_HOST
 from .auth import auth_backend
 
 from .schemas import UserRead, UserCreate
@@ -56,7 +50,6 @@ router_user.include_router(
 
 
 @router_user.get('/{user_id}',)
-@cache(expire=300)
 async def get_user(
     user_id: int,
     session: AsyncSession = Depends(get_async_session)
@@ -64,8 +57,3 @@ async def get_user(
     query = await session.execute(select(User).filter(User.id == user_id))
     user = query.scalar()
     return user
-
-@router_user.on_event("startup")
-async def startup():
-    redis = aioredis.from_url(f"redis://{REDIS_HOST}")
-    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")

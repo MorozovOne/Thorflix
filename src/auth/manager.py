@@ -8,9 +8,9 @@ from auth.letter import send_letter_to_email
 from auth.models import User, user
 from auth.utils import get_user_db
 
-from config import SECRET_KEY
+from core.config import get_settings
 
-SECRET = SECRET_KEY
+SECRET = get_settings().get('secret_key')
 
 
 
